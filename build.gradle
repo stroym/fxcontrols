@@ -1,0 +1,45 @@
+plugins {
+  id 'java'
+  id 'org.openjfx.javafxplugin' version '0.0.8'
+
+  id 'io.freefair.lombok' version '5.1.0'
+  id 'maven-publish'
+}
+
+group = 'cz.stroym'
+version = '0.0.1'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation group: 'org.openjfx', name: 'javafx', version: '15-ea+5', ext: 'pom'
+}
+
+javafx {
+  version = '11'
+  modules = ['javafx.controls', 'javafx.fxml']
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/stroym/FXControls")
+      credentials {
+        username = "$username"
+        password = "$token"
+      }
+    }
+  }
+  publications {
+    maven(MavenPublication) {
+
+      from(components.java)
+    }
+  }
+}
