@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'cz.stroym'
-version = '0.0.1'
+version = '0.0.2'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -38,7 +38,6 @@ publishing {
   }
   publications {
     maven(MavenPublication) {
-
       from(components.java)
     }
   }
