@@ -6,11 +6,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -80,7 +76,5 @@ public class AutocompleteTextField<T> extends TextField {
     candidatesContext.getItems().clear();
     candidatesContext.getItems().addAll(candidatesItems);
   }
-  
-
   
 }

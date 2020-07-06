@@ -1,13 +1,19 @@
 package cz.stroym.fxcontrols.control;
 
+import cz.stroym.fxcontrols.util.FXUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +24,8 @@ import java.util.List;
 @Getter
 @Setter
 public class SearchableListView<T> extends ListView<T> {
+  
+  private final ContextMenu inputContext = new ContextMenu();
   
   private String capturedInput = "";
   
@@ -32,7 +40,6 @@ public class SearchableListView<T> extends ListView<T> {
     registerCellFactory();
   }
   
-  //TODO popup or hide records not matching criteria and show them from the top instead of (just) scrolling to them
   private void registerCellFactory() {
     this.setCellFactory(new Callback<>() {
       @Override
@@ -41,17 +48,13 @@ public class SearchableListView<T> extends ListView<T> {
           @Override
           protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);
-            
-            //              if (!capturedInput.equals("") && !item.toString().contains(capturedInput)) {
-            //                setVisible(false);
-            //              }
-            
             setText(empty ? null : getItem() == null ? "" : getItem().toString());
+            
             if (item == getSelectionModel().getSelectedItem()) {
               setStyle(
                   "-fx-background-color: transparent;" +
                   "-fx-text-fill: orange;" +
-                  "-fx-font-weight: bold;"
+                  "-fx-font-weight: bolder;"
               );
             } else {
               setStyle("");
@@ -63,27 +66,39 @@ public class SearchableListView<T> extends ListView<T> {
   }
   
   private void setupListeners() {
-    //handle special key presses
+    //handle key presses
     this.setOnKeyPressed(event -> {
-      //      handleKeys(event);
-      if (!event.getCode().isDigitKey() && !event.getCode().isLetterKey()) {
-        handleKeys(event);
+      event.consume();
+      
+      switch (event.getCode()) {
+        case ENTER:
+          capturedInput = "";
+          break;
+        case BACK_SPACE:
+        case DELETE:
+          if (!(capturedInput = capturedInput.substring(0, capturedInput.length() - 1)).isBlank()) {
+            searchAndFocusItem();
+          }
+          break;
+        default:
+          if (!(capturedInput += event.getText()).isBlank()) {
+            searchAndFocusItem();
+          }
       }
-    });
-    
-    
-    //TODO backspace issues
-    //add char to filter when typed
-    this.setOnKeyTyped(event -> {
-      capturedInput += event.getCharacter();
-      System.out.println(capturedInput);
       
       if (!capturedInput.isBlank()) {
-        searchAndFocusItem();
+        showContext();
       }
     });
     
-    //autosort items when any item change occurs
+    //clear capturedInput on gaiń focus
+    this.focusedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!oldValue && newValue) {
+        capturedInput = "";
+      }
+    });
+    
+    //sort items after any change
     this.getItems().addListener(new ListChangeListener() {
       @Override
       public void onChanged(ListChangeListener.Change change) {
@@ -93,42 +108,31 @@ public class SearchableListView<T> extends ListView<T> {
     
   }
   
-  private void handleKeys(KeyEvent event) {
-    switch (event.getCode()) {
-      case ENTER:
-        capturedInput = "";
-        break;
-      case BACK_SPACE:
-        if (capturedInput.length() > 1) {
-          capturedInput = capturedInput.substring(0, capturedInput.length() - 1);
-        }
-        break;
-      default:
-    }
-    
-    System.out.println(capturedInput);
-    
-    event.consume();
-  }
-  
   private void searchAndFocusItem() {
-    T foundItem = null;
-    
-    for (T item : this.getItems()) {
-      System.out.println("Matching " + item.toString() + "with " + capturedInput);
+    for (T item : getItems()) {
       if (item.toString().startsWith(capturedInput)) {
-        foundItem = item;
-        break;
+        scrollTo(getItems().indexOf(item));
+        getSelectionModel().select(item);
+        
+        return;
       }
     }
     
-    if (foundItem != null) {
-      System.out.println("Matched " + foundItem.toString() + "with " + capturedInput);
-      
-      scrollTo(getItems().indexOf(foundItem));
-      getSelectionModel().select(foundItem);
-    } else {
-      getSelectionModel().select(-1);
+    getSelectionModel().select(-1);
+  }
+  
+  private void showContext() {
+    Label entryLabel = new Label(capturedInput);
+    //      entryLabel.setPrefHeight(Font.getDefault().getSize() - 2);
+    CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+    
+    inputContext.getItems().clear();
+    inputContext.getItems().add(item);
+    
+    if (!inputContext.isShowing()) {
+      //TODO display context smaller and inside listview
+      //TODO try to choose direction in which context is shown responsively
+      inputContext.show(SearchableListView.this, Side.TOP, 0, 0);
     }
   }
   
