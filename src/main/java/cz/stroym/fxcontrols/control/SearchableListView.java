@@ -76,19 +76,18 @@ public class SearchableListView<T> extends ListView<T> {
           break;
         case BACK_SPACE:
         case DELETE:
-          if (!(capturedInput = capturedInput.substring(0, capturedInput.length() - 1)).isBlank()) {
-            searchAndFocusItem();
+          if (capturedInput.length() > 0) {
+            capturedInput = capturedInput.substring(0, capturedInput.length() - 1);
           }
+          
+          searchAndFocusItem();
           break;
         default:
-          if (!(capturedInput += event.getText()).isBlank()) {
-            searchAndFocusItem();
-          }
+          capturedInput += event.getText();
+          searchAndFocusItem();
       }
       
-      if (!capturedInput.isBlank()) {
-        showContext();
-      }
+      showContext();
     });
     
     //clear capturedInput on gaiń focus
@@ -109,30 +108,40 @@ public class SearchableListView<T> extends ListView<T> {
   }
   
   private void searchAndFocusItem() {
-    for (T item : getItems()) {
-      if (item.toString().startsWith(capturedInput)) {
-        scrollTo(getItems().indexOf(item));
-        getSelectionModel().select(item);
-        
-        return;
+    if(!capturedInput.isBlank()){
+      for (T item : getItems()) {
+        if (item.toString().startsWith(capturedInput)) {
+          scrollTo(getItems().indexOf(item));
+          getSelectionModel().select(item);
+      
+          return;
+        }
       }
     }
     
+    //if no match is found or if capturedInput is empty, deselect
     getSelectionModel().select(-1);
   }
   
   private void showContext() {
-    Label entryLabel = new Label(capturedInput);
-    //      entryLabel.setPrefHeight(Font.getDefault().getSize() - 2);
-    CustomMenuItem item = new CustomMenuItem(entryLabel, true);
-    
-    inputContext.getItems().clear();
-    inputContext.getItems().add(item);
-    
-    if (!inputContext.isShowing()) {
-      //TODO display context smaller and inside listview
-      //TODO try to choose direction in which context is shown responsively
-      inputContext.show(SearchableListView.this, Side.TOP, 0, 0);
+    if (!capturedInput.isBlank()) {
+      
+      Label entryLabel = new Label(capturedInput);
+      //      entryLabel.setPrefHeight(Font.getDefault().getSize() - 2);
+      CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+      
+      inputContext.getItems().clear();
+      inputContext.getItems().add(item);
+      
+      if (!inputContext.isShowing()) {
+        //TODO display context smaller and inside listview
+        //TODO try to choose direction in which context is shown responsively
+        inputContext.show(SearchableListView.this, Side.TOP, 0, 0);
+      }
+    } else {
+      if (inputContext.isShowing()) {
+        inputContext.hide();
+      }
     }
   }
   
