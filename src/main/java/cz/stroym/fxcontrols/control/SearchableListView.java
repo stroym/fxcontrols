@@ -1,8 +1,5 @@
 package cz.stroym.fxcontrols.control;
 
-import cz.stroym.fxcontrols.util.FXUtils;
-import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
@@ -11,15 +8,9 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Font;
 import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -98,22 +89,16 @@ public class SearchableListView<T> extends ListView<T> {
     });
     
     //sort items after any change
-    this.getItems().addListener(new ListChangeListener() {
-      @Override
-      public void onChanged(ListChangeListener.Change change) {
-        setItems(getItems().sorted());
-      }
-    });
-    
+    this.getItems().addListener((ListChangeListener<T>) change -> setItems(getItems().sorted()));
   }
   
   private void searchAndFocusItem() {
-    if(!capturedInput.isBlank()){
+    if (!capturedInput.isBlank()) {
       for (T item : getItems()) {
         if (item.toString().startsWith(capturedInput)) {
           scrollTo(getItems().indexOf(item));
           getSelectionModel().select(item);
-      
+          
           return;
         }
       }
@@ -126,17 +111,15 @@ public class SearchableListView<T> extends ListView<T> {
   private void showContext() {
     if (!capturedInput.isBlank()) {
       
-      Label entryLabel = new Label(capturedInput);
-      //      entryLabel.setPrefHeight(Font.getDefault().getSize() - 2);
-      CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+      Label          entryLabel = new Label(capturedInput);
+      CustomMenuItem item       = new CustomMenuItem(entryLabel, true);
       
       inputContext.getItems().clear();
       inputContext.getItems().add(item);
       
       if (!inputContext.isShowing()) {
-        //TODO display context smaller and inside listview
-        //TODO try to choose direction in which context is shown responsively
-        inputContext.show(SearchableListView.this, Side.TOP, 0, 0);
+        //TODO try to align context better (maybe top right inside parent?)
+        inputContext.show(this, Side.TOP, 0, 0);
       }
     } else {
       if (inputContext.isShowing()) {
