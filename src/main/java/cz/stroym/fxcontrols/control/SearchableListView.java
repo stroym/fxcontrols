@@ -1,5 +1,6 @@
 package cz.stroym.fxcontrols.control;
 
+import cz.stroym.fxcontrols.exception.NoSelectionException;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
@@ -81,11 +82,10 @@ public class SearchableListView<T> extends ListView<T> {
       showContext();
     });
     
-    //clear capturedInput on gaiń focus
-    this.focusedProperty().addListener((observable, oldValue, newValue) -> {
-      if (!oldValue && newValue) {
-        capturedInput = "";
-      }
+    this.inputContext.setOnHidden(event -> {
+      event.consume();
+      
+      capturedInput = "";
     });
     
     //sort items after any change
@@ -110,7 +110,6 @@ public class SearchableListView<T> extends ListView<T> {
   
   private void showContext() {
     if (!capturedInput.isBlank()) {
-      
       Label          entryLabel = new Label(capturedInput);
       CustomMenuItem item       = new CustomMenuItem(entryLabel, true);
       
@@ -126,6 +125,17 @@ public class SearchableListView<T> extends ListView<T> {
         inputContext.hide();
       }
     }
+  }
+  
+  public T getSelectedItem() throws NoSelectionException {
+    T item = this.getSelectionModel().getSelectedItem();
+    
+    if(item!= null){
+      return item;
+    } else {
+      throw new NoSelectionException();
+    }
+    
   }
   
 }
