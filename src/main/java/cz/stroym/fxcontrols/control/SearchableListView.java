@@ -1,15 +1,12 @@
 package cz.stroym.fxcontrols.control;
 
-import cz.stroym.fxcontrols.exception.NoSelectionException;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,38 +20,11 @@ public class SearchableListView<T> extends ListView<T> {
   
   public SearchableListView() {
     setupListeners();
-    registerCellFactory();
   }
   
   public SearchableListView(ObservableList<T> items) {
     super(items);
     setupListeners();
-    registerCellFactory();
-  }
-  
-  private void registerCellFactory() {
-    this.setCellFactory(new Callback<>() {
-      @Override
-      public ListCell<T> call(ListView<T> listView) {
-        return new ListCell<>() {
-          @Override
-          protected void updateItem(T item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(empty ? null : getItem() == null ? "" : getItem().toString());
-            
-            if (item == getSelectionModel().getSelectedItem()) {
-              setStyle(
-                  "-fx-background-color: transparent;" +
-                  "-fx-text-fill: orange;" +
-                  "-fx-font-weight: bolder;"
-              );
-            } else {
-              setStyle("");
-            }
-          }
-        };
-      }
-    });
   }
   
   private void setupListeners() {
@@ -87,9 +57,6 @@ public class SearchableListView<T> extends ListView<T> {
       
       capturedInput = "";
     });
-    
-    //sort items after any change
-    this.getItems().addListener((ListChangeListener<T>) change -> setItems(getItems().sorted()));
   }
   
   private void searchAndFocusItem() {
@@ -127,15 +94,15 @@ public class SearchableListView<T> extends ListView<T> {
     }
   }
   
-  public T getSelectedItem() throws NoSelectionException {
+  public T getSelectedItem() {
     T item = this.getSelectionModel().getSelectedItem();
     
-    if(item!= null){
-      return item;
-    } else {
-      throw new NoSelectionException();
+    if (item == null && this.getItems().size() > 0) {
+      this.getSelectionModel().select(0);
+      return this.getSelectedItem();
     }
     
+    return item;
   }
   
 }
