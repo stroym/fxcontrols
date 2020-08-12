@@ -6,7 +6,7 @@ module cz.stroym.fxcontrols {
   requires org.controlsfx.controls;
   
   opens image;
-  opens css;
+//  opens css;
   
   exports cz.stroym.fxcontrols.control to javafx.fxml, cz.stroym.fxnotes;
 }

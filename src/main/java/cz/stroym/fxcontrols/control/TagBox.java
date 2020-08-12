@@ -1,25 +1,20 @@
 package cz.stroym.fxcontrols.control;
 
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import lombok.Getter;
-import org.controlsfx.control.SearchableComboBox;
-
-import java.util.Locale;
 
 @Getter
 public class TagBox extends VBox {
   
-  private final SearchableComboBox<String> comboBox           = new SearchableComboBox<>();
-  private final ScrollableFlowPane         scrollableFlowPane = new ScrollableFlowPane();
+  private final MySearchableComboBox<String> comboBox           = new MySearchableComboBox<>();
+  private final ScrollableFlowPane           scrollableFlowPane = new ScrollableFlowPane();
   
   public TagBox() {
     this.comboBox.setPrefHeight(20);
