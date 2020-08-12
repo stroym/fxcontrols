@@ -14,6 +14,8 @@ import lombok.Setter;
 @Setter
 public class SearchableListView<T> extends ListView<T> {
   
+  //TODO implement a collapseable thingy
+  
   private final ContextMenu inputContext = new ContextMenu();
   
   private String capturedInput = "";

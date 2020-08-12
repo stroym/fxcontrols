@@ -17,7 +17,9 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Getter
-public class AutocompleteTextField<T> extends TextField {
+public class AutoCompleteTextField<T> extends TextField {
+  
+  //TODO implementace, kde napovídání je formou prompt textu
   
   private final SortedSet<T> entries           = new TreeSet<>();
   private final ContextMenu  candidatesContext = new ContextMenu();
@@ -25,7 +27,7 @@ public class AutocompleteTextField<T> extends TextField {
   @Setter
   private int maxEntries = 10;
   
-  public AutocompleteTextField() {
+  public AutoCompleteTextField() {
     super();
     
     textProperty().addListener((observable, oldValue, newValue) -> {
@@ -42,7 +44,7 @@ public class AutocompleteTextField<T> extends TextField {
           populatePopup(candidates, entryText);
           
           if (!candidatesContext.isShowing()) {
-            candidatesContext.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
+            candidatesContext.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
           }
         } else {
           candidatesContext.hide();
