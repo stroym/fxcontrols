@@ -1,5 +1,6 @@
 package cz.stroym.fxcontrols.control;
 
+import cz.stroym.fxcontrols.skin.MySearchableComboBoxSkin;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Skin;

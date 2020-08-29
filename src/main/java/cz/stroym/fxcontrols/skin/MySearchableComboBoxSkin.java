@@ -1,4 +1,4 @@
-package cz.stroym.fxcontrols.control;
+package cz.stroym.fxcontrols.skin;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;

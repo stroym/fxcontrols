@@ -8,11 +8,11 @@ plugins {
 
 version = '0.2.0'
 
-dependencies{
-  api (group: 'org.controlsfx', name: 'controlsfx', version: '11.0.2') {
-    exclude group: 'org.openjfx'
-  }
-}
+//dependencies{
+//  api (group: 'org.controlsfx', name: 'controlsfx', version: '11.0.2') {
+//    exclude group: 'org.openjfx'
+//  }
+//}
 
 publishing {
   repositories {

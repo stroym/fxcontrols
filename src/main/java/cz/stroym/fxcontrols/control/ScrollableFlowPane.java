@@ -22,9 +22,13 @@ public class ScrollableFlowPane extends ScrollPane {
   public ObservableList<Node> getFlowChildren() {
     return this.flowPane.getChildren();
   }
-
+  
   public void addFlowChild(Node child) {
     this.flowPane.getChildren().add(child);
+  }
+  
+  public void removeFlowChild(Node child) {
+    this.flowPane.getChildren().remove(child);
   }
   
 }
